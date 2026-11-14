@@ -1,0 +1,27 @@
+{
+    "categories":  [
+                       {
+                           "icon":  "🔧",
+                           "links":  [
+                                         {
+                                             "icon":  "",
+                                             "url":  "https://github.com",
+                                             "name":  "GitHub",
+                                             "id":  "link-1",
+                                             "description":  "全球最大的代码托管平台"
+                                         },
+                                         {
+                                             "icon":  "",
+                                             "url":  "https://google.com",
+                                             "name":  "Google",
+                                             "id":  "link-2",
+                                             "description":  "全球最大的搜索引擎"
+                                         }
+                                     ],
+                           "name":  "常用工具",
+                           "id":  "cat-1"
+                       }
+                   ],
+    "adminPasswordHash":  "",
+    "version":  1
+}
