@@ -8,28 +8,20 @@
           "url": "https://github.com",
           "name": "GitHub",
           "id": "link-1",
-          "description": "å¨çæå¤§çä»£ç æç®¡å¹³å°"
+          "description": "Ã¥ÂÂ¨Ã§ÂÂÃ¦ÂÂÃ¥Â¤Â§Ã§ÂÂÃ¤Â»Â£Ã§Â ÂÃ¦ÂÂÃ§Â®Â¡Ã¥Â¹Â³Ã¥ÂÂ°"
         },
         {
           "icon": "",
           "url": "https://google.com",
           "name": "Google",
           "id": "link-2",
-          "description": "å¨çæå¤§çæç´¢å¼æ"
+          "description": "Ã¥ÂÂ¨Ã§ÂÂÃ¦ÂÂÃ¥Â¤Â§Ã§ÂÂÃ¦ÂÂÃ§Â´Â¢Ã¥Â¼ÂÃ¦ÂÂ"
         }
       ],
-      "name": "å¸¸ç¨å·¥å·",
+      "name": "Ã¥Â¸Â¸Ã§ÂÂ¨Ã¥Â·Â¥Ã¥ÂÂ·",
       "id": "cat-1",
       "iconType": "emoji",
-      "iconEmoji": "ð§"
-    },
-    {
-      "id": "cat_1794623067687",
-      "name": "AI",
-      "icon": "https://raw.githubusercontent.com/holdenwu99-cpu/awebsiteonglyfordognzai/main/icons/icon_1794623061608.jpg",
-      "iconType": "image",
-      "iconEmoji": "",
-      "parent": null
+      "iconEmoji": "Ã°ÂÂÂ§"
     }
   ],
   "adminPasswordHash": "f6567c5ea67ab3a0a1b05bffa41da2ce78d02eefb522d9f3f2da3d9cb21a213b",
