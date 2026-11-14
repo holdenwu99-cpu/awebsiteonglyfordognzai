@@ -1530,7 +1530,7 @@
             }
             
             const result = await response.json();
-            const content = atob(result.content);
+            const content = decodeURIComponent(escape(atob(result.content)));
             const remoteData = JSON.parse(content);
             
             // 兼容旧数据格式
