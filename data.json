@@ -1,27 +1,38 @@
 {
-    "categories":  [
-                       {
-                           "icon":  "🔧",
-                           "links":  [
-                                         {
-                                             "icon":  "",
-                                             "url":  "https://github.com",
-                                             "name":  "GitHub",
-                                             "id":  "link-1",
-                                             "description":  "全球最大的代码托管平台"
-                                         },
-                                         {
-                                             "icon":  "",
-                                             "url":  "https://google.com",
-                                             "name":  "Google",
-                                             "id":  "link-2",
-                                             "description":  "全球最大的搜索引擎"
-                                         }
-                                     ],
-                           "name":  "常用工具",
-                           "id":  "cat-1"
-                       }
-                   ],
-    "adminPasswordHash":  "",
-    "version":  1
+  "categories": [
+    {
+      "icon": "",
+      "links": [
+        {
+          "icon": "",
+          "url": "https://github.com",
+          "name": "GitHub",
+          "id": "link-1",
+          "description": "å¨çæå¤§çä»£ç æç®¡å¹³å°"
+        },
+        {
+          "icon": "",
+          "url": "https://google.com",
+          "name": "Google",
+          "id": "link-2",
+          "description": "å¨çæå¤§çæç´¢å¼æ"
+        }
+      ],
+      "name": "å¸¸ç¨å·¥å·",
+      "id": "cat-1",
+      "iconType": "emoji",
+      "iconEmoji": "ð§"
+    },
+    {
+      "id": "cat_1794623067687",
+      "name": "AI",
+      "icon": "https://raw.githubusercontent.com/holdenwu99-cpu/awebsiteonglyfordognzai/main/icons/icon_1794623061608.jpg",
+      "iconType": "image",
+      "iconEmoji": "",
+      "parent": null
+    }
+  ],
+  "adminPasswordHash": "f6567c5ea67ab3a0a1b05bffa41da2ce78d02eefb522d9f3f2da3d9cb21a213b",
+  "version": 1,
+  "sites": []
 }
