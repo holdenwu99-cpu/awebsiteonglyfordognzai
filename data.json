@@ -34,5 +34,16 @@
   ],
   "adminPasswordHash": "f6567c5ea67ab3a0a1b05bffa41da2ce78d02eefb522d9f3f2da3d9cb21a213b",
   "version": 1,
-  "sites": []
+  "sites": [
+    {
+      "id": "1794631276693",
+      "name": "抖音下载",
+      "url": "https://snapany.com/zh/youtube-media-downloader",
+      "category": "cat_1794631227625",
+      "desc": "抖音/B站/U管",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": ""
+    }
+  ]
 }
