@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人导航</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+    <title>东仔个人导航</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76'/%3E%3C/svg%3E">
     <style>
         * {
             margin: 0;
@@ -89,6 +89,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .sidebar-header .logo svg {
+            width: 20px;
+            height: 20px;
         }
 
         .sidebar-header h1 {
@@ -309,6 +314,14 @@
             transform: translateY(-50%);
             color: var(--text-tertiary);
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-box .search-icon svg {
+            width: 18px;
+            height: 18px;
         }
 
         .header-actions {
@@ -527,9 +540,20 @@
             color: var(--text-tertiary);
         }
 
-        .empty-state .emoji {
-            font-size: 48px;
-            margin-bottom: 16px;
+        .empty-state .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+        }
+
+        .empty-state .empty-icon svg {
+            width: 48px;
+            height: 48px;
         }
 
         .empty-state h3 {
@@ -1075,8 +1099,13 @@
         <!-- 侧边栏 -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header" id="sidebarHeader">
-                <div class="logo" id="sidebarLogo">🔗</div>
-                <h1>个人导航</h1>
+                <div class="logo" id="sidebarLogo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                    </svg>
+                </div>
+                <h1>东仔个人导航</h1>
             </div>
             <nav class="sidebar-nav" id="sidebarNav">
                 <!-- 动态渲染 -->
@@ -1101,7 +1130,12 @@
             <header class="header">
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
                 <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                    </span>
                     <input type="text" id="searchInput" placeholder="搜索网址..." oninput="handleSearch(this.value)">
                 </div>
                 <div class="header-actions">
@@ -1954,7 +1988,7 @@
                         <span>${catName}</span>
                     </div>
                     <div class="empty-state">
-                        <div class="emoji">${searchKeyword ? '🔍' : '📭'}</div>
+                        <div class="empty-icon">${searchKeyword ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`}</div>
                         <h3>${searchKeyword ? '没有找到匹配的网址' : '该分类下暂无网址'}</h3>
                         <p>${searchKeyword ? '试试其他关键词' : ''}</p>
                     </div>
