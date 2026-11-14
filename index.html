@@ -169,6 +169,42 @@
             border-radius: 10px;
         }
 
+        /* 分类操作按钮 */
+        .cat-actions {
+            display: none;
+            margin-left: auto;
+            margin-right: 4px;
+            gap: 2px;
+        }
+
+        .nav-item:hover .cat-actions,
+        .nav-category-header:hover .cat-actions {
+            display: flex;
+        }
+
+        .cat-action-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .cat-action-btn:hover {
+            opacity: 1;
+            background: var(--bg-hover);
+        }
+
+        .cat-action-btn.delete:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
         .nav-item.active .count {
             background: var(--accent-color);
             color: white;
@@ -194,7 +230,13 @@
             transition: transform 0.2s;
             font-size: 10px;
             color: var(--text-tertiary);
-            margin-left: auto;
+        }
+
+        .nav-category-header .name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .nav-category-header.collapsed .arrow {
@@ -1912,10 +1954,17 @@
                 
                 if (children.length > 0) {
                     const isCollapsed = collapsedCategories.has(cat.id);
+                    const adminActions = isAdminMode && cat.id !== 'all' ? `
+                        <span class="cat-actions">
+                            <span class="cat-action-btn" onclick="event.stopPropagation(); openEditCategoryModal('${cat.id}')" title="编辑分类">✏️</span>
+                            <span class="cat-action-btn delete" onclick="deleteCategory('${cat.id}', event)" title="删除分类">🗑️</span>
+                        </span>
+                    ` : '';
                     html += `
                         <div class="nav-category-header ${isCollapsed ? 'collapsed' : ''}" onclick="toggleCategory('${cat.id}')">
                             <span class="icon">${renderCategoryIcon(cat)}</span>
                             <span class="name">${cat.name}</span>
+                            ${adminActions}
                             <span class="count">${siteCount}</span>
                             <span class="arrow">▼</span>
                         </div>
@@ -1925,20 +1974,36 @@
                                 <span class="name">全部</span>
                                 <span class="count">${siteCount}</span>
                             </div>
-                            ${children.map(child => `
+                            ${children.map(child => {
+                                const childAdminActions = isAdminMode ? `
+                                    <span class="cat-actions">
+                                        <span class="cat-action-btn" onclick="event.stopPropagation(); openEditCategoryModal('${child.id}')" title="编辑分类">✏️</span>
+                                        <span class="cat-action-btn delete" onclick="deleteCategory('${child.id}', event)" title="删除分类">🗑️</span>
+                                    </span>
+                                ` : '';
+                                return `
                                 <div class="nav-item ${currentCategory === child.id ? 'active' : ''}" onclick="selectCategory('${child.id}')">
                                     <span class="icon">${renderCategoryIcon(child)}</span>
                                     <span class="name">${child.name}</span>
+                                    ${childAdminActions}
                                     <span class="count">${getSiteCount(child.id)}</span>
                                 </div>
-                            `).join('')}
+                            `;
+                            }).join('')}
                         </div>
                     `;
                 } else {
+                    const adminActions = isAdminMode && cat.id !== 'all' ? `
+                        <span class="cat-actions">
+                            <span class="cat-action-btn" onclick="event.stopPropagation(); openEditCategoryModal('${cat.id}')" title="编辑分类">✏️</span>
+                            <span class="cat-action-btn delete" onclick="deleteCategory('${cat.id}', event)" title="删除分类">🗑️</span>
+                        </span>
+                    ` : '';
                     html += `
                         <div class="nav-item ${currentCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
                             <span class="icon">${renderCategoryIcon(cat)}</span>
                             <span class="name">${cat.name}</span>
+                            ${adminActions}
                             <span class="count">${siteCount}</span>
                         </div>
                     `;
@@ -2298,6 +2363,74 @@
             
             document.getElementById('categoryModal').classList.add('show');
             setTimeout(() => document.getElementById('categoryName').focus(), 300);
+        }
+
+        function openEditCategoryModal(categoryId) {
+            if (!isAdminMode) return;
+            
+            const cat = data.categories.find(c => c.id === categoryId);
+            if (!cat) return;
+            
+            editingCategoryId = categoryId;
+            document.getElementById('categoryModalTitle').textContent = '编辑分类';
+            document.getElementById('categoryName').value = cat.name;
+            document.getElementById('categoryIcon').value = cat.iconType === 'image' ? cat.icon : cat.iconEmoji;
+            updateCategoryIconPreview();
+            
+            const select = document.getElementById('categoryParent');
+            select.innerHTML = '<option value="">无（作为一级分类）</option>' +
+                data.categories
+                    .filter(c => c.id !== 'all' && c.id !== categoryId)
+                    .filter(c => !c.parent)
+                    .map(c => `<option value="${c.id}" ${cat.parent === c.id ? 'selected' : ''}>${c.iconEmoji || ''} ${c.name}</option>`)
+                    .join('');
+            
+            document.getElementById('categoryModal').classList.add('show');
+            setTimeout(() => document.getElementById('categoryName').focus(), 300);
+        }
+
+        function deleteCategory(categoryId, event) {
+            if (!isAdminMode) return;
+            if (event) event.stopPropagation();
+            
+            const cat = data.categories.find(c => c.id === categoryId);
+            if (!cat) return;
+            
+            // 检查是否有子分类
+            const children = data.categories.filter(c => c.parent === categoryId);
+            const siteCount = getSiteCount(categoryId);
+            
+            let message = `确定要删除分类「${cat.name}」吗？`;
+            if (children.length > 0) {
+                message += `\n\n该分类下有 ${children.length} 个子分类，子分类也会被一起删除。`;
+            }
+            if (siteCount > 0) {
+                message += `\n\n该分类（含子分类）下有 ${siteCount} 个网址，删除后网址也会被移除。`;
+            }
+            message += '\n\n此操作不可撤销！';
+            
+            if (!confirm(message)) return;
+            
+            // 收集所有要删除的分类ID（包括子分类）
+            const categoryIdsToDelete = [categoryId];
+            children.forEach(child => categoryIdsToDelete.push(child.id));
+            
+            // 删除分类
+            data.categories = data.categories.filter(c => !categoryIdsToDelete.includes(c.id));
+            
+            // 删除相关网址
+            data.sites = data.sites.filter(s => !categoryIdsToDelete.includes(s.category));
+            
+            // 如果当前选中的分类被删了，跳到全部
+            if (categoryIdsToDelete.includes(currentCategory)) {
+                currentCategory = 'all';
+            }
+            
+            saveLocalData();
+            autoSyncToGithub();
+            renderSidebar();
+            renderContent();
+            showToast('删除成功', 'success');
         }
 
         function updateCategoryIconPreview() {
