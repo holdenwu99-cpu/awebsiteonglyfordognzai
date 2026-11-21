@@ -1,50 +1,58 @@
 {
-    "version":  1,
-    "adminPasswordHash":  "f6567c5ea67ab3a0a1b05bffa41da2ce78d02eefb522d9f3f2da3d9cb21a213b",
-    "categories":  [
-                       {
-                           "id":  "cat-1",
-                           "name":  "常用工具",
-                           "icon":  "",
-                           "iconType":  "emoji",
-                           "iconEmoji":  "🔧",
-                           "parent":  null,
-                           "links":  [
-                                         {
-                                             "id":  "link-1",
-                                             "name":  "GitHub",
-                                             "url":  "https://github.com",
-                                             "description":  "全球最大的代码托管平台",
-                                             "icon":  ""
-                                         },
-                                         {
-                                             "id":  "link-2",
-                                             "name":  "Google",
-                                             "url":  "https://google.com",
-                                             "description":  "全球最大的搜索引擎",
-                                             "icon":  ""
-                                         }
-                                     ]
-                       },
-                       {
-                           "id":  "cat_1794631227625",
-                           "name":  "视频",
-                           "icon":  "",
-                           "iconType":  "emoji",
-                           "iconEmoji":  "🎬",
-                           "parent":  null
-                       }
-                   ],
-    "sites":  [
-                  {
-                      "id":  "1794631276693",
-                      "name":  "抖音下载",
-                      "url":  "https://snapany.com/zh/youtube-media-downloader",
-                      "category":  "cat_1794631227625",
-                      "desc":  "抖音/B站/U管",
-                      "icon":  "",
-                      "iconType":  "emoji",
-                      "iconEmoji":  ""
-                  }
-              ]
+  "version": 1,
+  "adminPasswordHash": "f6567c5ea67ab3a0a1b05bffa41da2ce78d02eefb522d9f3f2da3d9cb21a213b",
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "常用工具",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": "🔧",
+      "parent": null,
+      "links": [
+        {
+          "id": "link-1",
+          "name": "GitHub",
+          "url": "https://github.com",
+          "description": "全球最大的代码托管平台",
+          "icon": ""
+        },
+        {
+          "id": "link-2",
+          "name": "Google",
+          "url": "https://google.com",
+          "description": "全球最大的搜索引擎",
+          "icon": ""
+        }
+      ]
+    },
+    {
+      "id": "cat_1794631227625",
+      "name": "视频",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": "🎬",
+      "parent": null
+    },
+    {
+      "id": "cat_1795242957687",
+      "name": "AI",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": "",
+      "parent": null
+    }
+  ],
+  "sites": [
+    {
+      "id": "1794631276693",
+      "name": "抖音下载",
+      "url": "https://snapany.com/zh/youtube-media-downloader",
+      "category": "cat_1794631227625",
+      "desc": "抖音/B站/U管",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": ""
+    }
+  ]
 }
