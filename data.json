@@ -29,6 +29,16 @@
       "icon": "",
       "iconType": "emoji",
       "iconEmoji": ""
+    },
+    {
+      "id": "1795242998434",
+      "name": "ELEVENLABS",
+      "url": "https://elevenlabs.io/app/home",
+      "category": "cat_1795242957687",
+      "desc": "TTS",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": ""
     }
   ]
 }
