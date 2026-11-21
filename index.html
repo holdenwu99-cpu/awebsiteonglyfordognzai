@@ -468,6 +468,17 @@
             background: #ffddd8;
         }
 
+        .sync-indicator.unconfigured {
+            background: #f0f0f0;
+            color: #8c8c8c;
+            cursor: pointer;
+        }
+
+        .sync-indicator.unconfigured:hover {
+            background: #e5e5e5;
+            color: #595959;
+        }
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -1428,7 +1439,24 @@
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn btn-primary" onclick="saveGithubSettings()" style="flex: 1;">保存配置</button>
-                        <button class="btn" onclick="syncFromGithub()" style="flex: 1;">从 GitHub 拉取</button>
+                        <button class="btn" onclick="testGithubConnection()" style="flex: 1;">测试连接</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <button class="btn" onclick="syncFromGithub()" style="flex: 1;">↓ 从 GitHub 拉取</button>
+                        <button class="btn" onclick="syncToGithub(); syncStatus='syncing'; updateSyncIndicator();" style="flex: 1;">↑ 立即同步</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <button class="btn" onclick="exportConfig()" style="flex: 1; font-size: 13px;">📤 导出配置</button>
+                        <button class="btn" onclick="document.getElementById('importConfigInput').click()" style="flex: 1; font-size: 13px;">📥 导入配置</button>
+                        <input type="file" id="importConfigInput" accept=".json" style="display: none;" onchange="importConfig(event)">
+                    </div>
+                    <div class="form-hint" style="margin-top: 12px; padding: 10px; background: var(--bg-hover); border-radius: 8px;">
+                        <div style="font-weight: 500; margin-bottom: 4px;">💡 Token 保存说明</div>
+                        <div style="font-size: 12px; line-height: 1.6;">
+                            • Token 仅保存在当前浏览器的本地存储中<br>
+                            • 清浏览器缓存 / 换设备 / 换浏览器都会丢失<br>
+                            • 建议「导出配置」保存到本地，丢了可以导入恢复
+                        </div>
                     </div>
                 </div>
 
@@ -2689,7 +2717,113 @@
             settings.githubToken = token;
             saveSettings();
             updateRepoStatus();
+            updateSyncIndicator();
             showToast('配置已保存', 'success');
+        }
+
+        async function testGithubConnection() {
+            const repo = document.getElementById('githubRepo').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
+            
+            if (!repo || !token) {
+                showToast('请先填写仓库地址和 Token', 'error');
+                return;
+            }
+            
+            showToast('正在测试连接...', 'info');
+            
+            try {
+                const response = await fetch(`https://api.github.com/repos/${repo}`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast(`✅ 连接成功！仓库：${data.full_name}`, 'success', 4000);
+                    
+                    // 测试成功后顺便保存
+                    settings.githubRepo = repo;
+                    settings.githubToken = token;
+                    saveSettings();
+                    updateRepoStatus();
+                    updateSyncIndicator();
+                    syncStatus = 'success';
+                    updateSyncIndicator();
+                } else if (response.status === 401) {
+                    showToast('❌ Token 无效，请检查 Token 是否正确', 'error', 5000);
+                } else if (response.status === 403) {
+                    showToast('❌ Token 权限不足，请确认有 repo 权限', 'error', 5000);
+                } else if (response.status === 404) {
+                    showToast('❌ 仓库不存在或 Token 无权访问', 'error', 5000);
+                } else {
+                    showToast(`❌ 连接失败 (${response.status})`, 'error', 5000);
+                }
+            } catch (e) {
+                showToast('❌ 网络错误：' + e.message, 'error', 5000);
+            }
+        }
+
+        function exportConfig() {
+            const configData = {
+                version: 1,
+                exportTime: new Date().toISOString(),
+                settings: {
+                    githubRepo: settings.githubRepo,
+                    githubToken: settings.githubToken,
+                    darkMode: settings.darkMode
+                }
+            };
+            
+            const dataStr = JSON.stringify(configData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nav-config-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('配置已导出，妥善保管好文件！', 'success', 4000);
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.settings && imported.settings.githubRepo && imported.settings.githubToken) {
+                        settings.githubRepo = imported.settings.githubRepo;
+                        settings.githubToken = imported.settings.githubToken;
+                        if (imported.settings.darkMode !== undefined) {
+                            settings.darkMode = imported.settings.darkMode;
+                        }
+                        saveSettings();
+                        applySettings();
+                        updateRepoStatus();
+                        updateSyncIndicator();
+                        
+                        // 填充到输入框
+                        document.getElementById('githubRepo').value = settings.githubRepo;
+                        document.getElementById('githubToken').value = settings.githubToken;
+                        
+                        showToast('✅ 配置导入成功！', 'success');
+                        
+                        // 自动测试一下连接
+                        setTimeout(() => verifyGithubToken(), 500);
+                    } else {
+                        showToast('配置文件格式不正确', 'error');
+                    }
+                } catch (err) {
+                    showToast('文件解析失败', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
         function toggleDarkMode() {
@@ -2745,15 +2879,25 @@
             const el = document.getElementById('syncIndicator');
             if (!el) return;
             
-            // 只有管理模式 + 配置了 GitHub 才显示
-            if (!isAdminMode || !settings.githubRepo || !settings.githubToken) {
+            // 访客模式不显示
+            if (!isAdminMode) {
                 el.classList.add('hidden');
                 return;
             }
             
-            el.classList.remove('hidden', 'syncing', 'success', 'error');
+            el.classList.remove('hidden', 'syncing', 'success', 'error', 'unconfigured');
             const iconEl = el.querySelector('.sync-icon');
             const textEl = el.querySelector('.sync-text');
+            
+            // 没配置 Token：显示未配置状态
+            if (!settings.githubRepo || !settings.githubToken) {
+                el.classList.add('unconfigured');
+                iconEl.textContent = '⚙';
+                textEl.textContent = '未配置同步';
+                el.title = '点击配置 GitHub 同步';
+                el.onclick = () => openSettingsModal();
+                return;
+            }
             
             switch (syncStatus) {
                 case 'syncing':
@@ -2778,7 +2922,11 @@
                     el.onclick = () => { syncStatus = 'syncing'; updateSyncIndicator(); syncToGithub(); };
                     break;
                 default:
-                    el.classList.add('hidden');
+                    el.classList.add('success');
+                    iconEl.textContent = '✓';
+                    textEl.textContent = '已就绪';
+                    el.title = 'GitHub 同步已配置';
+                    el.onclick = null;
             }
         }
 
