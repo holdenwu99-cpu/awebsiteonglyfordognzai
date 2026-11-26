@@ -66,7 +66,8 @@
       "desc": "桌面录制，剪辑，丝滑放大",
       "icon": "",
       "iconType": "emoji",
-      "iconEmoji": ""
+      "iconEmoji": "",
+      "platform": "mobile"
     }
   ]
 }
