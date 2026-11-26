@@ -57,6 +57,16 @@
       "icon": "",
       "iconType": "emoji",
       "iconEmoji": ""
+    },
+    {
+      "id": "1795683007172",
+      "name": "RECORDLY",
+      "url": "https://recordly.dev/",
+      "category": "cat_1794631227625",
+      "desc": "桌面录制，剪辑，丝滑放大",
+      "icon": "",
+      "iconType": "emoji",
+      "iconEmoji": ""
     }
   ]
 }
