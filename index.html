@@ -544,6 +544,29 @@
             transform: translateY(-1px);
         }
 
+        .platform-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--p-color);
+            background: var(--p-bg);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .platform-badge .platform-icon {
+            font-size: 12px;
+            line-height: 1;
+        }
+
         .card-icon {
             width: 40px;
             height: 40px;
@@ -796,6 +819,52 @@
             font-size: 12px;
             color: var(--text-tertiary);
             margin-top: 6px;
+        }
+
+        /* 平台选择器 */
+        .platform-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .platform-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .platform-option input {
+            display: none;
+        }
+
+        .platform-option-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 8px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+            background: var(--bg-secondary);
+        }
+
+        .platform-option:hover .platform-option-inner {
+            border-color: var(--accent-color-light);
+        }
+
+        .platform-option input:checked + .platform-option-inner {
+            border-color: var(--accent-color);
+            background: var(--accent-color-light);
+        }
+
+        .platform-option .po-icon {
+            font-size: 24px;
+        }
+
+        .platform-option .po-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
         /* 图标上传 */
@@ -1287,6 +1356,32 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>平台类型</label>
+                    <div class="platform-selector">
+                        <label class="platform-option">
+                            <input type="radio" name="sitePlatform" value="online" checked>
+                            <span class="platform-option-inner">
+                                <span class="po-icon">🌐</span>
+                                <span class="po-label">在线</span>
+                            </span>
+                        </label>
+                        <label class="platform-option">
+                            <input type="radio" name="sitePlatform" value="desktop">
+                            <span class="platform-option-inner">
+                                <span class="po-icon">💻</span>
+                                <span class="po-label">电脑</span>
+                            </span>
+                        </label>
+                        <label class="platform-option">
+                            <input type="radio" name="sitePlatform" value="mobile">
+                            <span class="platform-option-inner">
+                                <span class="po-icon">📱</span>
+                                <span class="po-label">手机</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label>简介</label>
                     <textarea id="siteDesc" placeholder="简单描述一下这个网站（选填）"></textarea>
                 </div>
@@ -1536,6 +1631,12 @@
         // 可配置的仓库地址（部署时可以改这里，或者从 URL 参数读取）
         // 例如访问 index.html?repo=username/nav-data
         const DEFAULT_REPO = 'holdenwu99-cpu/awebsiteonglyfordognzai'; // 部署时填你的仓库地址，如 'yourname/nav-data'
+
+        const PLATFORMS = {
+            online: { label: '在线', icon: '🌐', color: '#10b981', bg: '#ecfdf5' },
+            desktop: { label: '电脑', icon: '💻', color: '#3b82f6', bg: '#eff6ff' },
+            mobile: { label: '手机', icon: '📱', color: '#f59e0b', bg: '#fffbeb' }
+        };
 
         // ==================== 状态 ====================
         let data = null;
@@ -2237,8 +2338,18 @@
                 </div>
             ` : '';
             
+            const platform = site.platform || 'online';
+            const p = PLATFORMS[platform] || PLATFORMS.online;
+            const badgeHtml = `
+                <span class="platform-badge platform-${platform}" style="--p-color: ${p.color}; --p-bg: ${p.bg};" title="${p.label}">
+                    <span class="platform-icon">${p.icon}</span>
+                    <span class="platform-label">${p.label}</span>
+                </span>
+            `;
+            
             return `
                 <div class="card" onclick="openSite('${site.url}')" title="${site.desc || site.url}">
+                    ${badgeHtml}
                     <div class="card-icon">
                         ${renderSiteIcon(site)}
                     </div>
@@ -2273,6 +2384,9 @@
             document.getElementById('siteIcon').value = '';
             updateSiteIconPreview();
             
+            // 默认选在线
+            document.querySelector('input[name="sitePlatform"][value="online"]').checked = true;
+            
             const select = document.getElementById('siteCategory');
             select.innerHTML = data.categories
                 .filter(c => c.id !== 'all')
@@ -2302,6 +2416,11 @@
             document.getElementById('siteDesc').value = site.desc || '';
             document.getElementById('siteIcon').value = site.icon || '';
             updateSiteIconPreviewWithSite(site);
+            
+            // 回填平台
+            const platform = site.platform || 'online';
+            const platformRadio = document.querySelector(`input[name="sitePlatform"][value="${platform}"]`);
+            if (platformRadio) platformRadio.checked = true;
             
             const select = document.getElementById('siteCategory');
             select.innerHTML = data.categories
@@ -2410,6 +2529,10 @@
             const icon = iconType === 'image' ? iconUrl : '';
             const iconEmoji = iconType === 'emoji' ? iconUrl : '';
             
+            // 获取平台
+            const platformRadio = document.querySelector('input[name="sitePlatform"]:checked');
+            const platform = platformRadio ? platformRadio.value : 'online';
+            
             if (editingSiteId) {
                 const site = data.sites.find(s => s.id === editingSiteId);
                 if (site) {
@@ -2420,6 +2543,7 @@
                     site.icon = icon;
                     site.iconType = iconType;
                     site.iconEmoji = iconEmoji;
+                    site.platform = platform;
                 }
                 showToast('修改成功', 'success');
             } else {
@@ -2431,7 +2555,8 @@
                     desc,
                     icon,
                     iconType,
-                    iconEmoji
+                    iconEmoji,
+                    platform
                 });
                 showToast('添加成功', 'success');
             }
